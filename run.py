@@ -27,20 +27,21 @@ header = {
     'User-Agent': agent
 }
 
-res = requests.get(f'https://www.amazon.co.jp/dp/{product_id}/', headers=header) #calibarn
+res = requests.get(f'https://www.amazon.co.jp/dp/{product_id}/', headers=header)
 soup = BeautifulSoup(res.text, 'html.parser')
 
 elems = soup.select('#corePriceDisplay_desktop_feature_div > div.a-section.a-spacing-none.aok-align-center > span.a-price.aok-align-center.reinventPricePriceToPayMargin.priceToPay > span:nth-child(2) > span.a-price-whole')
 
 if not elems:
     print('element not found')
+    print(res.headers.get('Content-Length'))
     sys.exit(1)
 
 current_price = int(elems[0].contents[0].replace(',', ''))
 
 if current_price > price:
     print(f'{current_price} is higher than {price}')
-    exit(1)
+    exit(0)
 
 data = {
     'token': slack_api_token,
